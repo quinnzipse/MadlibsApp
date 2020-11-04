@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Mablibs</string>
+    <string name="welcome_title">Welcome to Mad Libs!</string>
+    <string name="welcome_message">This game will ask you for a series words in order to finish a complete story. Then, once you\'re done, you get to read the completed story.</string>
+    <string name="welcome_button">Get Started!</string>
+    <string name="fill_title">Keep filling in words to complete the story!</string>
+    <string name="fill_left">%1$d Word(s) Left!</string>
+    <string name="fill_subtext">Please type a </string>
+    <string name="fill_next">Next</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
