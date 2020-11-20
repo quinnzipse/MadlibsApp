@@ -5,7 +5,8 @@
     <string name="welcome_button">Get Started!</string>
     <string name="fill_title">Keep filling in words to complete the story!</string>
     <string name="fill_left">%1$d Word(s) Left!</string>
-    <string name="fill_subtext">Please type a </string>
+    <string name="fill_subtext">Please type a(n) %s</string>
     <string name="fill_next">Next</string>
     <string name="story_title">Check out your story!</string>
+    <string name="restart">Restart</string>
 </resources>

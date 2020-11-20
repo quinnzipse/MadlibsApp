@@ -5,48 +5,71 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.android.synthetic.main.activity_fill.*
 import java.io.BufferedReader
-import java.io.File
-import java.util.*
+import java.io.InputStreamReader
 
 class Fill : AppCompatActivity() {
 
-    private var wordsLeft: Int = -1
+    private var wordsRead: Int = 0
     private var words: Int = -1
     private lateinit var list: Array<String>
 
-    private val inputStream = File("madlib1.txt").inputStream()
-    private val inString : String = inputStream.bufferedReader().use { it.readText() }
-    private val regex : Regex = Regex("<[A-Za-z]*>")
+    private lateinit var inString: String
+    private lateinit var matches: Array<String>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fill)
 
-        val matches = regex.findAll(inString)
+        // read the file
+        inString = readFile()
 
-        wordsLeft = matches.count()
-        words = wordsLeft - 1
+        // Prep the backend.
+        matches = getFillables()
+        words = matches.count()
+        list = Array(words) { "" }
 
-        words_left.text = String.format(getString(R.string.fill_left), wordsLeft)
+        // Initialize the UI.
+        words_left.text = String.format(getString(R.string.fill_left), words)
+        subtext.text = String.format(getString(R.string.fill_subtext), getMatch(0))
+
         nextButton.setOnClickListener { onNextButton() }
+    }
 
-        list = Array(wordsLeft) { "" }
+    private fun readFile(): String {
+        val inFile = resources.openRawResource(R.raw.madlib1)
+        return BufferedReader(InputStreamReader(inFile)).use { it.readText() }
+    }
+
+    private fun getFillables(): Array<String> {
+        val regex = Regex("""<\S*>""")
+        return regex.findAll(inString).map { it.value }.toList().toTypedArray()
+    }
+
+    private fun getMatch(i: Int): String {
+        return matches.elementAt(i).drop(1).dropLast(1).replace("-", " ")
     }
 
     private fun onNextButton() {
         val input = input.text
 
-        wordsLeft--
-        words_left.text = String.format(getString(R.string.fill_left), wordsLeft)
-
-        list[words - wordsLeft] = input.toString()
+        list[wordsRead] = input.toString()
         input.clear()
 
-        if (wordsLeft == 0) showStory()
+        wordsRead++
+
+        // Update the number of words remaining.
+        words_left.text = String.format(getString(R.string.fill_left), words - wordsRead)
+
+        // If there are more words, update the remaining words.
+        if (wordsRead == words) showStory()
+        else subtext.text = String.format(getString(R.string.fill_subtext), getMatch(wordsRead))
     }
 
     private fun showStory() {
         Intent(this, FilledStory::class.java).also {
             it.putExtra("List", list)
+            it.putExtra("Story", inString)
+            it.putExtra("Fillables", matches)
             startActivity(it)
         }
     }
